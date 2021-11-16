@@ -13,12 +13,16 @@
       var ballX = 50;
       var ballY = 50;
       var ballSpeedX = 10;
-      var ballSpeedY = 4;
+      var ballSpeedY = 6;
+
+      var player1Score = 0;
+      var player2Score = 0;
 
       var paddle1Y = 250;
       var paddle2Y = 250;
       const PADDLE_HEIGHT = 100;
       const PADDLE_THICKNESS = 10;
+      const PADDLE2Y_MOVE_STEP = 6;
 
       function calculateMousePos(evt) {
         var rect = canvas.getBoundingClientRect();
@@ -45,7 +49,7 @@
         canvas.addEventListener("mousemove", function (evt) {
           var mousePos = calculateMousePos(evt);
           paddle1Y = mousePos.y - PADDLE_HEIGHT / 2;
-          paddle2Y = mousePos.y - PADDLE_HEIGHT / 2;
+          // paddle2Y = mousePos.y - PADDLE_HEIGHT / 2;
         });
       };
 
@@ -55,7 +59,18 @@
         ballY = canvas.height / 2;
       }
 
+      function computerMovement() {
+        var paddle2YCenter = paddle2Y + (PADDLE_HEIGHT/2);
+        if (paddle2YCenter < ballY - 30) {
+          paddle2Y += PADDLE2Y_MOVE_STEP;
+        } else if (paddle2YCenter > ballY + 30) {
+          paddle2Y -= PADDLE2Y_MOVE_STEP;
+        }
+      }
+
       function moveEverything() {
+        computerMovement();
+
         ballX += ballSpeedX;
         ballY += ballSpeedY;
 
@@ -64,6 +79,7 @@
             ballSpeedX = -ballSpeedX;
           } else {
             ballReset();
+            player1Score++;
           }
         }
 
@@ -72,6 +88,7 @@
             ballSpeedX = -ballSpeedX;
           } else {
             ballReset();
+            player2Score++;
           }
         }
 
@@ -94,6 +111,10 @@
         colorRect(canvas.width - PADDLE_THICKNESS, paddle2Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "blue");
         //next line draws the ball
         colorCircle(ballX, ballY, 10, "red");
+
+        canvasContext.fillStyle = "white";
+        canvasContext.fillText(player1Score, 100, 100);
+        canvasContext.fillText(player2Score, canvas.width -100, 100);
       }
 
       function colorCircle(centerX, centerY, radius, drawColor) {
