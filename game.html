@@ -38,6 +38,14 @@
         };
       }
 
+      function handleMouseClick(evt) {
+        if(showingWinScreen) {
+          player1Score = 0;
+          player2Score = 0;
+          showingWinScreen = false;
+        }
+      }
+
       window.onload = function () {
         canvas = document.getElementById("gameCanvas");
         canvasContext = canvas.getContext("2d");
@@ -49,6 +57,8 @@
           drawEverything();
         }, 1000 / framesPerSecond);
 
+        canvas.addEventListener('mousedown', handleMouseClick);
+
         canvas.addEventListener("mousemove", function (evt) {
           var mousePos = calculateMousePos(evt);
           paddle1Y = mousePos.y - PADDLE_HEIGHT / 2;
@@ -58,8 +68,8 @@
 
       function ballReset() {
         if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
-          player1Score = 0;
-          player2Score = 0;
+          // player1Score = 0;
+          // player2Score = 0;
           showingWinScreen = true;
         }
 
@@ -121,15 +131,31 @@
         console.log("ballX: " + ballX + "; ballY: " + ballY);
       }
 
+      function drawNet() {
+        for (var i=0;i<canvas.height;i+=40) {
+          colorRect(canvas.width/2 - 1, i, 2, 20, "white");
+        }
+      }
+
       function drawEverything() {
         // next line blanks out the screen with black
         colorRect(0, 0, canvas.width, canvas.height, "black");
 
         if (showingWinScreen) {
+          canvasContext.fillStyle = "red";
+          if (player1Score >= WINNING_SCORE) {
+            canvasContext.fillText("Player 1 wins!!!", 350, 200);
+          } else if (player2Score >= WINNING_SCORE) {
+            canvasContext.fillText("Computer wins!!!", 350, 200);
+          }
+
           canvasContext.fillStyle = "yellow";
-          canvasContext.fillText("Click to continue", 100, 100);
+          canvasContext.fillText("Click to continue", 350, 500);
           return;
         }
+
+        //draw net
+        drawNet();
 
         // this is left player paddle
         colorRect(0, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, "green");
